@@ -1,3 +1,5 @@
+
+const USER = {"id":1, "username":"pouros"};
 document.addEventListener("DOMContentLoaded", function() {});
 
 function fetchGetBooks(){ //get Json data
@@ -30,12 +32,54 @@ function renderBooks(book){
     h3.innerHTML = book.users.map(user => user.username).join(", ")
     detailButton.className = "detail-button"
     detailButton.innerHTML = "Read this book"
-
+    detailButtonFunctionality(book, detailButton);
     //作った箱にデータを入れたものを一括りとしてここからappend
     div.append(h2,p,img,h3,detailButton);
     list.appendChild(div)
     return div;
 };
+
+//ここから復習
+function detailButtonFunctionality(book, detailButton) {
+    debugger;
+    detailButton.addEventListener('click', e => {
+      toggleUser(book, USER)
+    })
+  }
+
+  function toggleUser(book, user) {
+    bookUser = book.users.findIndex(bookUser => bookUser.id === user.id)
+  
+    if (bookUser === -1) {
+      book.users.push(user);
+    } else {
+      book.users.splice(bookUser, 1)
+    }
+  
+    updateBook(book).then(book => {
+      displayBook(book);
+    })
+  }
+
+  function updateBook(book) {
+    return fetch(`http://localhost:3000/books/${book.id}`, {
+      method: 'PATCH', 
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(book)
+    }).then(resp =>   resp.json());
+  }
+
+  function displayBook(book) {
+    const div = document.querySelector('#show-panel')
+    while (div.firstChild){
+      div.removeChild(div.firstChild)
+    }
+  
+    div.appendChild(renderBooks(book))
+  }
 
 window.addEventListener("DOMContentLoaded", (event) => {
     fetchGetBooks(); // to triger "get" json
