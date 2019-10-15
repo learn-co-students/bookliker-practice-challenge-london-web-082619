@@ -13,7 +13,7 @@ const getBooks = function(){//パラメーターいらない
 //             "Content-Type": "application/json",
 //             "Accept": "application/json"
 //         },
-//         body: JSON.stringify()
+//         body: JSON.stringify(newBook)
 //     }
 // }
 
@@ -26,7 +26,7 @@ const patchBook = function(book){
             "Accept": "application/json"
         },
         body: JSON.stringify(book)
-    });//post,getの後に.then(resp => resp.json())
+    }).then(resp => resp.json());
 };
 
 const API = {getBooks, patchBook};
