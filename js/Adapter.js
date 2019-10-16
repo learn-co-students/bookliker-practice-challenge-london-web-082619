@@ -1,24 +1,36 @@
-class Adapter {
+const booksURL = "http://localhost:3000/books"
 
-  static getBooks() {
-    return fetch("http://localhost:3000/books")
-      .then(response => response.json())
-      .catch(console.log);
+const getBooks = () => {
+  return fetch(booksURL)
+    .then(objectify);
+}
+
+const patchBook = (bookId, updatedUsers) => {
+  config = createPatchConfig(updatedUsers);
+  return fetch(`${booksURL}/${bookId}`, config)
+    .then(objectify);
+}
+
+const createPatchConfig = updatedUsers => {
+  return {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ users: updatedUsers })
   }
+}
 
-  static updateBook(book) {
-    const body = { users: book.users }
-    const config = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(body)
-    }
-    return fetch(`http://localhost:3000/books/${book.id}`, config)
-      .then(response => response.json())
-      .catch(console.log);
+const objectify = (response) => {
+  if (response.ok) {
+    return response.json();
+  } else {
+    throw new Error("HTTP status code " + response.status);
   }
+}
 
+const adapter = {
+  getBooks: getBooks,
+  patchBook: patchBook
 }
