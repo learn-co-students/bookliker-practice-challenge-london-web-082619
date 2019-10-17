@@ -48,7 +48,12 @@ const showBook = function(book){
       };
   
   const btn = document.createElement("button");
+  
   btn.innerText = "Read"
+  btn.addEventListener("click", function(e){
+    addUser(book, currentUser);
+  })
+
   const form = document.createElement("form");
   form.className ="patch-form"
   form.innerHTML = `<input type="textarea" name="description" value="" placeholder="description" class="input-text"><input type="submit" name="submit" value="Amend" class="submit">`;
@@ -62,13 +67,28 @@ const showBook = function(book){
 };
 //Optimistic
 const updateDesc = function(book, p, e){
-  // p.innerText = e.target.elements.description.value;
+   p.innerText = e.target.elements.description.value;
   const descForm = document.querySelector('input[name="description"]');
   p.innerText = descForm.value;
   
-  const newDesc = {
-      // description: e.target.elements.description.value
-      description: descForm.value
+  const bookObj = {
+      id: book.id,
+      description: e.target.elements.description.value
+      // description: descForm.value
   };
-  API.patchBook(book, newDesc)
+  API.patchBook(bookObj)
 };
+
+//
+const addUser = function(book, currentUser){
+  //back-end
+  book.users.push(currentUser)
+  API.patchBook(book)
+  //front-end
+  const userLi = document.createElement('li')
+    const ul = document.querySelector("#users-list")
+    userLi.innerText = currentUser.username
+    userLi.id = `user-${currentUser.id}`
+    ul.append(userLi)
+
+}

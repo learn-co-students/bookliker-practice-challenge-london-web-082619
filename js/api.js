@@ -6,14 +6,14 @@ const getBooks = function(){
     .then(resp => resp.json())
 };
 
-const patchBook = function(book, newDesc){
+const patchBook = function(book){
     return fetch(`${BOOKS_URL}/${book.id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"
         },
-        body: JSON.stringify(newDesc)
+        body: JSON.stringify(book)
     })
 };
 
