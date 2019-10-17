@@ -1,32 +1,20 @@
-const API_ENDPOINT = "http://localhost:3000" //Newの時に使う
-const BOOKS_URL = `${API_ENDPOINT}/books`
+const END_POINT = "http://localhost:3000"
+const BOOKS_URL = `${END_POINT}/books`
 
-const getBooks = function(){//パラメーターいらない
-    return fetch(BOOKS_URL).then(resp => resp.json());//requestして受けとりJsonに変換
+const getBooks = function(){
+    return fetch(BOOKS_URL)
+    .then(resp => resp.json())
 };
 
-
-// const postBook = function(newBook) {
-//     return fetch(BOOKS_URL, {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Accept": "application/json"
-//         },
-//         body: JSON.stringify(newBook)
-//     }
-// }
-
-
-const patchBook = function(book){
-    return fetch (`${BOOKS_URL}/${book.id}`,{
+const patchBook = function(book, newDesc){
+    return fetch(`${BOOKS_URL}/${book.id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"
         },
-        body: JSON.stringify(book)
-    }).then(resp => resp.json());
+        body: JSON.stringify(newDesc)
+    })
 };
 
 const API = {getBooks, patchBook};

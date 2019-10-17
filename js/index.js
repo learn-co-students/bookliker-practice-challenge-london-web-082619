@@ -1,98 +1,74 @@
+const bookList = document.querySelector("#list");
+const showPanel = document.querySelector("#show-panel");
+const currentUser = { "id": 1, "username": "pouros" };
 
-const currentUser = {"id":1, "username":"pouros"};
-const bookList = document.querySelector("#list")
-const bookShow = document.querySelector("#show-panel")
-const amendBtn = document.querySelector("#test"); //テスト練習で追加
+API.getBooks().then(books => renderBooks(books));
 
-API.getBooks().then(books => renderBooks(books));//データの呼び出し、よって()コール。変換したものをiterationのメソッドにパス
-
-const renderBooks = function(books){//iterationのコントロールのみ
-  for (const book of books) {// オブジェクトがarrayの中
-    renderBook(book);
-  }
+//iteration
+// const renderBooks = function(books){
+//   for (const book of books){   
+//     renderBook(book);
+//   }
+// };
+const renderBooks = function(books){
+  books.forEach(book => {
+    renderBook(book)
+});
 };
+
+//list books
 const renderBook = function(book){
-  const li = document.createElement("li");//箱作とコンテンツ挿入
-  li.className = "book";
-  li.id = book.id;
-  const h2 = document.createElement("h2");
-  h2.innerText = book.title;
-  h2.addEventListener("click", function(event){
-    while (bookShow.firstChild){                //前にコールされて挿入されたものを消す。この場合はIterationの心配がないのでここ。githubを参照
-      bookShow.removeChild(bookShow.firstChild)
-    };
-    showBook(book);
-  });
-  li.append(h2);
+  const li = document.createElement("li");
+  const h3 = document.createElement("h3");
+  h3.innerText = book.title;
+  h3.addEventListener("click", function(e){
+    showBook(book)
+  })
+  li.append(h3);
   bookList.appendChild(li);
-
 };
 
-//ここから復習//
 const showBook = function(book){
-  const div = document.createElement("div");
-  div.id = book.id
-  const h2 = document.createElement("h2");
-  h2.innerText = book.title;
-  const p = document.createElement("p");
-  p.innerText = book.description;
-　const img = document.createElement("img");
-  img.src = book.img_url;
-
-  const ul = document.createElement("ul")
-  ul.id= "users-list"
-    book.users.forEach(user => {
-      const userLi = document.createElement("li");
-      userLi.innerText = user.username;
-      userLi.id = `user-${user.id}`;
-      ul.append(userLi)
-    });
-  
-  const readButton = document.createElement("button")
-  readButton.addEventListener("click", function(event){
-    handleUser(book);
-  });
-  
-  if (alreadyRead(book)){
-    readButton.innerText = "Unread me"
-  } else {readButton.innerText = "Read me"
+  while(showPanel.firstChild){
+    showPanel.removeChild(showPanel.firstChild)
   };
-  const 
-  div.append(h2,p,img,ul,readButton);
-  bookShow.appendChild(div)
+  const p = document.createElement("p");
+  p.innerText = book.description
+  const img = document.createElement("img");
+  img.src = book.img_url;
+  
+      //list of users
+      const userUl = document.createElement("ul");
+      userUl.id = "users-list"
+      //iteration 
+      for (const user of book.users){
+        const userLi = document.createElement("li");
+        userLi.innerText = user.username
+        userUl.appendChild(userLi)
+      };
+  
+  const btn = document.createElement("button");
+  btn.innerText = "Read"
+  const form = document.createElement("form");
+  form.className ="patch-form"
+  form.innerHTML = `<input type="textarea" name="description" value="" placeholder="description" class="input-text"><input type="submit" name="submit" value="Amend" class="submit">`;
+  form.addEventListener("submit", function(e){
+    e.preventDefault()
+    updateDesc(book, p, e)
+  })
+   
+  showPanel.append(p,img,userUl,btn,form);
+
 };
-
-const handleUser = function(book){
-  if (!alreadyRead(book)){
-    book.users.push(currentUser)
-    API.patchBook(book)
-    const userLi = document.createElement('li')
-    const ul = document.querySelector("#users-list")
-    userLi.innerText = currentUser.username
-    userLi.id = `user-${currentUser.id}`
-    ul.append(userLi)
-    const readButton = document.querySelector('button')
-    readButton.innerText = 'UnRead Me'
-  } else {
-    book.users = book.users.filter(user => user.id !== currentUser.id)
-    API.patchBook(book)
-    const foundLi = document.querySelector(`#user-${currentUser.id}`)
-    foundLi.remove()
-    const readButton = document.querySelector('button')
-    readButton.innerText = 'Read Me'
-  }
-}
-
-const alreadyRead = function(book){
-  return book.users.find(usr => usr.id === currentUser.id) //true flase判定に使うのでプログラム内で保持しておく必要あり。よってReturn
+//Optimistic
+const updateDesc = function(book, p, e){
+  // p.innerText = e.target.elements.description.value;
+  const descForm = document.querySelector('input[name="description"]');
+  p.innerText = descForm.value;
+  
+  const newDesc = {
+      // description: e.target.elements.description.value
+      description: descForm.value
+  };
+  API.patchBook(book, newDesc)
 };
-
-//以下は勝手に追加。テスト練習
-
-// amendBtm.addEventListener("click", function(event){
-//     event.preventDefault();
-//     amendDescription({
-//       description: 
-//     })
-// });
-// const amendDescrition
