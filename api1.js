@@ -1,8 +1,9 @@
-const BOOKS_URL = "http://localhost:3000/books";
+const END_POINT = "http://localhost:3000"
+const BOOKS_URL = `${END_POINT}/books`
 
 const getBooks = function(){
-    return fetch(BOOKS_URL).
-    then(resp => resp.json())
+    return fetch(BOOKS_URL)
+    .then(resp => resp.json())
 };
 
 const patchBook = function(book){
